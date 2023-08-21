@@ -1,0 +1,10 @@
+#root {
+  width: 100%;
+  min-height:100vh;
+  background-color: rgba(65, 65, 65, 0.062);
+  margin: 0 auto;
+  /* padding: 1rem; */
+  text-align: center;
+}
+
+

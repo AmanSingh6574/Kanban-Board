@@ -1,0 +1,33 @@
+
+.container{
+    margin-top: 20px;
+    /* border: 1px solid black; */
+    border-radius: 2px;
+    width: 350px;
+    height: 470px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding: 4px;
+}
+
+.container::-webkit-scrollbar{
+    display: none;
+}
+.title{
+    text-align: left;
+    font-size: 17px;
+    /* background-color: rgba(94, 86, 86, 0.404); */
+    width: 100%;
+    padding-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    margin-left: 5px;
+    justify-items: center;
+    align-items: center;
+}
+
+.task-list{
+    padding: 2px;
+    /* background-color: aquamarine; */
+}
