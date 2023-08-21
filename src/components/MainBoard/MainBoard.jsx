@@ -354,7 +354,7 @@ function MainBoard() {
                     </div>
                 </div>
                 <div>
-                    *Note Drang and Drop Facility is only for initial state
+                    *Note Drag and Drop Facility is only for initial state
                 </div>
             </div>
             <DragDropContext onDragEnd={handleDrag}>
