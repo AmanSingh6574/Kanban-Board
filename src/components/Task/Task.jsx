@@ -4,7 +4,6 @@ import { Draggable } from "react-beautiful-dnd";
 import "./Task.css";
 
 function Task({ task, index }) {
-    // console.log(task);
 
     return (
         <Draggable draggableId={task.id} index={index}>
@@ -14,9 +13,9 @@ function Task({ task, index }) {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
-                    // isdragging={snapshot.isDragging}
+                 
                 >
-                    {/* Task content */}
+           
                     <div>
                         <span className="task-id" style={{ color: "gray", fontSize: "14px" }} >{task.id}</span>
                     </div>

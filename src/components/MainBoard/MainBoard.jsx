@@ -42,7 +42,7 @@ function MainBoard() {
     useEffect(() => {
         const storedTasks = localStorage.getItem("tasks");
         if (storedTasks) {
-            // If there's data in local storage, set the initial state from local storage
+
             setTasks(JSON.parse(storedTasks));
             const storedUserTask = localStorage.getItem("userTask");
             setuserTask(storedUserTask ? JSON.parse(storedUserTask) : []);
@@ -57,7 +57,7 @@ function MainBoard() {
             const storedSortingOption = localStorage.getItem("sortingOption");
             setSortingOption(storedSortingOption || "");
         } else {
-            // If no data in local storage, fetch the data
+
             const fetchData = async () => {
                 try {
                     const response = await fetch("https://api.quicksell.co/v1/internal/frontend-assignment");
@@ -102,13 +102,13 @@ function MainBoard() {
             return;
         }
 
-        // Find the task that was dragged
+
         const draggedTask = tasks.find((task) => task.id === draggableId);
 
-        // Create a new array of tasks with the dragged task removed
+
         const updatedTasks = tasks.filter((task) => task.id !== draggableId);
 
-        // Determine the status of the dragged task based on the destination column
+
         let status = "Todo";
         if (destination.droppableId === "1") {
             status = "Backlog";
@@ -125,10 +125,8 @@ function MainBoard() {
             status: status,
         };
 
-        // Insert the updated dragged task at the destination index
         updatedTasks.splice(destination.index, 0, updatedDraggedTask);
 
-        // Update the state with the new tasks array
         setTasks(updatedTasks);
     };
 
@@ -178,8 +176,8 @@ function MainBoard() {
 
 
         if (option === "user") {
-            // Group by user
-            const userTasksMap = new Map(); // Map to store tasks grouped by user
+
+            const userTasksMap = new Map();
 
             tasks.forEach((task) => {
                 const userName = userMap[task.userId];
@@ -189,34 +187,34 @@ function MainBoard() {
                 userTasksMap.get(userName).push(task);
             });
 
-            // Create an array of user task lists
+
             const userTaskLists = Array.from(userTasksMap.values());
             console.log(userTaskLists)
 
-            // Flatten the user task lists into a single array
+
             setuserTask(userTaskLists);
             console.log(userTask)
         }
         else if (option === "priority") {
-            const priorityTasksMap = new Map(); // Map to store tasks grouped by priority
+            const priorityTasksMap = new Map();
 
             tasks.forEach((task) => {
-                const priorityName = getPriorityName(task.priority); // Get priority name based on priority level
+                const priorityName = getPriorityName(task.priority);
                 if (!priorityTasksMap.has(priorityName)) {
                     priorityTasksMap.set(priorityName, []);
                 }
                 priorityTasksMap.get(priorityName).push(task);
             });
 
-            // Create an array of priority task lists
+
             const priorityTaskLists = Array.from(priorityTasksMap.values());
             console.log(priorityTaskLists)
-            // Set the priority task lists as columns
+
             setpriTask(priorityTaskLists);
             console.log(priTask);
         }
         else {
-            const statusTasksMap = new Map(); // Map to store tasks grouped by status
+            const statusTasksMap = new Map();
 
             tasks.forEach((task) => {
                 const status = task.status;
@@ -226,14 +224,13 @@ function MainBoard() {
                 statusTasksMap.get(status).push(task);
             });
 
-            // Create an array of status task lists
+
             const statusTaskLists = Array.from(statusTasksMap.values());
             console.log("in")
 
             // Set the status task lists as columns
             setStatusTasks(statusTaskLists);
-            // setUserTasks([]);     // Reset userTasks
-            // setPriorityTasks([]);
+
         }
 
     };
@@ -296,10 +293,10 @@ function MainBoard() {
                     <div>
                         <GiSettingsKnobs />
                     </div>
-                    <div style={{ 
-                        fontSize : "16px",
-                        fontWeight : "bold"
-                     }}>
+                    <div style={{
+                        fontSize: "16px",
+                        fontWeight: "bold"
+                    }}>
                         Display
                     </div>
                     <div>
@@ -407,7 +404,7 @@ function MainBoard() {
                 (groupingOption === "" || groupingOption === "#") && (
 
                     <DragDropContext onDragEnd={handleDrag}>
-                     
+
                         <div className="main-container" >
                             <MultipleCol
                                 title={"Backlog"}

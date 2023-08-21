@@ -1,10 +1,9 @@
 import { Droppable } from "react-beautiful-dnd";
 import Task from "../Task/Task";
-import { BsCircle  , BsThreeDots} from "react-icons/bs"
-import {AiOutlinePlus} from "react-icons/ai"
+import { BsCircle, BsThreeDots } from "react-icons/bs"
+import { AiOutlinePlus } from "react-icons/ai"
 import "./MultipleCol.css"
 function MultipleCol({ title, img, tasks, id }) {
-    // console.log(img)
     return (
         <div className="container">
             <div className="container-header" >
@@ -29,10 +28,10 @@ function MultipleCol({ title, img, tasks, id }) {
 
                 <div className="title-add">
                     <div>
-                        <AiOutlinePlus/>
+                        <AiOutlinePlus />
                     </div>
                     <div>
-                        <BsThreeDots/>
+                        <BsThreeDots />
                     </div>
 
                 </div>
