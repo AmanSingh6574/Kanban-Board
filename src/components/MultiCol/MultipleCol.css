@@ -14,10 +14,14 @@
 .container::-webkit-scrollbar{
     display: none;
 }
+.container-header{
+    display: flex;
+    padding-left: 10px;
+    padding-right: 15px;
+}
 .title{
     text-align: left;
     font-size: 17px;
-    /* background-color: rgba(94, 86, 86, 0.404); */
     width: 100%;
     padding-bottom: 15px;
     display: flex;
@@ -25,6 +29,13 @@
     margin-left: 5px;
     justify-items: center;
     align-items: center;
+}
+.title-add{
+    color: rgba(94, 86, 86, 0.974);
+    cursor: pointer;
+    text-align: right;
+    display: flex;
+    gap: 10px;
 }
 
 .task-list{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import MultipleCol from "../MultiCol/MultipleCol";
 
@@ -7,52 +7,92 @@ import { FiChevronDown } from "react-icons/fi"
 import "./MainBoard.css"
 
 function MainBoard() {
-    const [tasks, setTasks] = useState([]);
-    const [userTask, setuserTask] = useState([]);
-    const [priTask, setpriTask] = useState([]);
-    const [statusTasks, setStatusTasks] = useState([]);
-    const [userMap, setUserMap] = useState({});
-    const [groupingOption, setGroupingOption] = useState(""); // Default grouping option
-    const [sortingOption, setSortingOption] = useState(""); // Default sorting option
+    const [tasks, setTasks] = useState(() => {
+        const storedTasks = localStorage.getItem("tasks");
+        return storedTasks ? JSON.parse(storedTasks) : [];
+    });
+
+    const [userTask, setuserTask] = useState(() => {
+        const storedUserTask = localStorage.getItem("userTask");
+        return storedUserTask ? JSON.parse(storedUserTask) : [];
+    });
+
+    const [priTask, setpriTask] = useState(() => {
+        const storedPriTask = localStorage.getItem("priTask");
+        return storedPriTask ? JSON.parse(storedPriTask) : [];
+    });
+
+    const [statusTasks, setStatusTasks] = useState(() => {
+        const storedStatusTasks = localStorage.getItem("statusTasks");
+        return storedStatusTasks ? JSON.parse(storedStatusTasks) : [];
+    });
+
+    const [userMap, setUserMap] = useState(() => {
+        const storedUserMap = localStorage.getItem("userMap");
+        return storedUserMap ? JSON.parse(storedUserMap) : {};
+    });
+
+    const [groupingOption, setGroupingOption] = useState("");
+    const [sortingOption, setSortingOption] = useState("");
 
     const [displayOptionsVisible, setDisplayOptionsVisible] = useState(false);
+    const displayOptionsRef = useRef(null);
+
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch("https://api.quicksell.co/v1/internal/frontend-assignment");
-                const data = await response.json();
-                setTasks(data.tickets);
+        const storedTasks = localStorage.getItem("tasks");
+        if (storedTasks) {
+            // If there's data in local storage, set the initial state from local storage
+            setTasks(JSON.parse(storedTasks));
+            const storedUserTask = localStorage.getItem("userTask");
+            setuserTask(storedUserTask ? JSON.parse(storedUserTask) : []);
+            const storedPriTask = localStorage.getItem("priTask");
+            setpriTask(storedPriTask ? JSON.parse(storedPriTask) : []);
+            const storedStatusTasks = localStorage.getItem("statusTasks");
+            setStatusTasks(storedStatusTasks ? JSON.parse(storedStatusTasks) : []);
+            const storedUserMap = localStorage.getItem("userMap");
+            setUserMap(storedUserMap ? JSON.parse(storedUserMap) : {});
+            const storedGroupingOption = localStorage.getItem("groupingOption");
+            setGroupingOption(storedGroupingOption || "");
+            const storedSortingOption = localStorage.getItem("sortingOption");
+            setSortingOption(storedSortingOption || "");
+        } else {
+            // If no data in local storage, fetch the data
+            const fetchData = async () => {
+                try {
+                    const response = await fetch("https://api.quicksell.co/v1/internal/frontend-assignment");
+                    const data = await response.json();
+                    setTasks(data.tickets);
 
-                const userMapping = {};
-                data.users.forEach((user) => {
-                    userMapping[user.id] = user.name;
-                });
-                setUserMap(userMapping);
-                applyGrouping(data.tickets, "status");
+                    const userMapping = {};
+                    data.users.forEach((user) => {
+                        userMapping[user.id] = user.name;
+                    });
+                    setUserMap(userMapping);
+                    applyGrouping(data.tickets, "status");
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
 
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-
-        fetchData();
+            fetchData();
+        }
     }, []);
 
-    function checkid(id) {
-        if (id === "0") {
-            return "Todo"
+    const handleOutsideClick = (event) => {
+        if (displayOptionsRef.current && !displayOptionsRef.current.contains(event.target)) {
+            setDisplayOptionsVisible(false);
         }
-        else if (id === "1") {
-            return "inProgress"
-        }
-        else if (id === "2") {
-            return "Backlog"
-        }
-        else if (id === "3") {
-            return "Done"
-        }
-    }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleOutsideClick);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, []);
+
 
     const handleDrag = (result) => {
         const { destination, source, draggableId } = result;
@@ -91,17 +131,6 @@ function MainBoard() {
         // Update the state with the new tasks array
         setTasks(updatedTasks);
     };
-
-
-
-
-
-
-
-
-
-
-
 
 
     const applyGroupingAndSorting = (option, groupingOption) => {
@@ -245,6 +274,20 @@ function MainBoard() {
         }
     };
 
+    const saveStateToLocalStorage = () => {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+        localStorage.setItem("userTask", JSON.stringify(userTask));
+        localStorage.setItem("priTask", JSON.stringify(priTask));
+        localStorage.setItem("statusTasks", JSON.stringify(statusTasks));
+        localStorage.setItem("groupingOption", groupingOption);
+        localStorage.setItem("sortingOption", sortingOption);
+        localStorage.setItem("userMap", JSON.stringify(userMap));
+    };
+
+    useEffect(() => {
+        saveStateToLocalStorage();
+    }, [tasks, userTask, priTask, statusTasks, groupingOption, sortingOption, userMap])
+
 
     return (
         <div className="main-block">
@@ -253,7 +296,10 @@ function MainBoard() {
                     <div>
                         <GiSettingsKnobs />
                     </div>
-                    <div>
+                    <div style={{ 
+                        fontSize : "16px",
+                        fontWeight : "bold"
+                     }}>
                         Display
                     </div>
                     <div>
@@ -261,17 +307,18 @@ function MainBoard() {
                     </div>
                 </button>
                 <div
+                    ref={displayOptionsRef}
+                    className="main-option-container"
                     style={{
                         visibility: displayOptionsVisible ? "visible" : "hidden",
                         top: "50px",
                         position: "absolute",
-                        width: "200px",
+                        width: "250px",
                         display: "flex",
                         gap: "10px",
                         flexDirection: "column",
-                        backgroundColor: "white",
+                        backgroundColor: "lightgray",
                         padding: "10px",
-                        justifyContent: "space-between",
                         alignItems: "center",
                         left: "20px",
                         borderRadius: "10px"
@@ -281,7 +328,7 @@ function MainBoard() {
                         className="grouping-options"
                         style={{ visibility: displayOptionsVisible ? "visible" : "hidden" }}
                     >
-                        <label>Group By:</label>
+                        <label>Group By:  </label>
                         <select
                             value={groupingOption}
                             onChange={(e) => handleGroupingChange(e.target.value)}
@@ -297,7 +344,7 @@ function MainBoard() {
                         className="sorting-options"
                         style={{ visibility: displayOptionsVisible ? "visible" : "hidden" }}
                     >
-                        <label>Sort By:</label>
+                        <label>Sort By: </label>
                         <select
                             value={sortingOption}
                             onChange={(e) => handleSortingChange(e.target.value)}
@@ -309,18 +356,22 @@ function MainBoard() {
                         </select>
                     </div>
                 </div>
+                <div>
+                    *Note Drang and Drop Facility is only for initial state
+                </div>
             </div>
             <DragDropContext onDragEnd={handleDrag}>
                 <div className="main-container">
-                    {groupingOption === "user" && userTask.map((userTasks, index) => (
+                    {groupingOption === "user" && Object.keys(userMap).length > 0 && userTask.map((userTasks, index) => (
                         <MultipleCol
                             key={index}
                             title={userTasks[0] ? userMap[userTasks[0].userId] : "No User"}
-                            img = {userTasks[0] ? `https://api.dicebear.com/5.x/initials/svg?seed=${userMap[userTasks[0].userId]}` : "#"  }
+                            img={userTasks[0] ? `https://api.dicebear.com/5.x/initials/svg?seed=${userMap[userTasks[0].userId]}` : "#"}
                             tasks={userTasks}
                             id={index.toString()}
                         />
                     ))}
+
                     {groupingOption === "priority" && priTask.map((priorityTasks, index) => (
                         <MultipleCol
                             key={index}
@@ -356,7 +407,7 @@ function MainBoard() {
                 (groupingOption === "" || groupingOption === "#") && (
 
                     <DragDropContext onDragEnd={handleDrag}>
-                        <h2>Main Board</h2>
+                     
                         <div className="main-container" >
                             <MultipleCol
                                 title={"Backlog"}
