@@ -42,7 +42,7 @@ function Task({ task, index }) {
                     </div>
 
                     <div>
-                        task-priority  {task.priority}
+                        Task Priority {task.priority}
                     </div>
 
                     {provided.placeholder}

@@ -316,6 +316,7 @@ function MainBoard() {
                         <MultipleCol
                             key={index}
                             title={userTasks[0] ? userMap[userTasks[0].userId] : "No User"}
+                            img = {userTasks[0] ? `https://api.dicebear.com/5.x/initials/svg?seed=${userMap[userTasks[0].userId]}` : "#"  }
                             tasks={userTasks}
                             id={index.toString()}
                         />
